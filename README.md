@@ -1,5 +1,4 @@
 # Organizacion-de-Datos
-# TP1 - Primera parte
    
 # Grupo 5
     Integrantes: 
