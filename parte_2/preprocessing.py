@@ -19,6 +19,25 @@ def dummy_variables(df):
     df_dummy = pd.get_dummies(df, columns=columnas, dummy_na=False, drop_first=True)
     return df_dummy
 
+def remove_irrelevant_features(df):
+    # se quitan features no utiles (segun análisis exploratorio tp1)
+    df.drop('educacion_alcanzada', axis='columns', inplace = True)
+    df.drop('barrio', axis='columns', inplace = True)
+    return df
+    
+def missings_treatment(df):
+    # tratamiento de missings (visto en tp1)
+    df['categoria_de_trabajo'] = df['categoria_de_trabajo'].replace(np.nan, 'sin_informar')
+    df['trabajo'] = df['trabajo'].replace(np.nan, 'sin_informar')
+    df.loc[df['categoria_de_trabajo'] == 'sin_trabajo', ['trabajo']] = 'sin_trabajo'
+    return df
+
+def one_hot_encodding(df):
+    return pd.get_dummies(df, columns=['categoria_de_trabajo', 'estado_marital', 'genero', 'religion', 'rol_familiar_registrado', 'trabajo'], dummy_na=False, drop_first=True)
+
+def dataset_split(df):
+    # separo en set de entrenamiento y set de validacion usando la biblioteca model_selection de sklearn
+    return train_test_split(df.drop('tiene_alto_valor_adquisitivo', axis= 'columns'), df.tiene_alto_valor_adquisitivo, test_size = 0.30, random_state = 0)
 
 #Convertir las variables ordinales en numéricas
 from sklearn.preprocessing import OrdinalEncoder
