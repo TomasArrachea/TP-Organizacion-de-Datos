@@ -46,3 +46,16 @@ def ordinal_encode(df):
     df_encoded[["educacion_alcanzada_encoded"]] = oe.fit_transform(df_encoded[["educacion_alcanzada"]])
     df_encoded = df_encoded.drop('educacion_alcanzada', axis=1)
     return df_encoded
+
+
+#Seleccionar los features más importantes para el predictor
+def embedded(X, y, clf, min_importance=0.05):
+    X_embedded = X
+    feature_importance = 0
+    while(feature_importance < min_importance):
+        clf.fit(X, y)
+        min_feature = np.argmin(clf.feature_importances_)
+        feature_importance = clf.feature_importances_[min_feature]
+        feature = X.columns[min_feature]
+        X_embedded.drop(feature, axis=1, inplace=True)
+    return X_embedded
