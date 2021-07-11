@@ -36,15 +36,15 @@ def one_hot_encodding(df):
     return pd.get_dummies(df, columns=['categoria_de_trabajo', 'estado_marital', 'genero', 'religion', 'rol_familiar_registrado', 'trabajo'], dummy_na=False, drop_first=True)
 
 def dataset_split(df):
-    # separo en set de entrenamiento y set de validacion usando la biblioteca model_selection de sklearn
-    X_train, X_val, y_train, y_val =  train_test_split(
-        df.drop('tiene_alto_valor_adquisitivo', axis= 'columns'), df.tiene_alto_valor_adquisitivo, test_size = 0.30, random_state = 0
+    # se separa el dataset en entrenamiento y holdout usando la biblioteca model_selection de sklearn
+    X_train, X_holdout, y_train, y_holdout =  train_test_split(
+        df.drop('tiene_alto_valor_adquisitivo', axis= 'columns'), df.tiene_alto_valor_adquisitivo, test_size = 0.30, random_state = 0, stratify = df.tiene_alto_valor_adquisitivo
     )
     X_train.reset_index(drop = True, inplace= True)
-    X_val.reset_index(drop = True, inplace= True)
+    X_holdout.reset_index(drop = True, inplace= True)
     y_train.reset_index(drop = True, inplace= True)
-    y_val.reset_index(drop = True, inplace= True)
-    return X_train, X_val, y_train, y_val
+    y_holdout.reset_index(drop = True, inplace= True)
+    return X_train, X_holdout, y_train, y_holdout
 
 #Convertir las variables ordinales en numéricas
 from sklearn.preprocessing import OrdinalEncoder
