@@ -37,7 +37,14 @@ def one_hot_encodding(df):
 
 def dataset_split(df):
     # separo en set de entrenamiento y set de validacion usando la biblioteca model_selection de sklearn
-    return train_test_split(df.drop('tiene_alto_valor_adquisitivo', axis= 'columns'), df.tiene_alto_valor_adquisitivo, test_size = 0.30, random_state = 0)
+    X_train, X_val, y_train, y_val =  train_test_split(
+        df.drop('tiene_alto_valor_adquisitivo', axis= 'columns'), df.tiene_alto_valor_adquisitivo, test_size = 0.30, random_state = 0
+    )
+    X_train.reset_index(drop = True, inplace= True)
+    X_val.reset_index(drop = True, inplace= True)
+    y_train.reset_index(drop = True, inplace= True)
+    y_val.reset_index(drop = True, inplace= True)
+    return X_train, X_val, y_train, y_val
 
 #Convertir las variables ordinales en numéricas
 from sklearn.preprocessing import OrdinalEncoder
