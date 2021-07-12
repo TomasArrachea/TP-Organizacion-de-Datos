@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+
 ## Funciones utilizadas para el preprocesamiento de cada modelo
 
 
@@ -35,10 +37,13 @@ def missings_treatment(df):
 def one_hot_encodding(df):
     return pd.get_dummies(df, columns=['categoria_de_trabajo', 'estado_marital', 'genero', 'religion', 'rol_familiar_registrado', 'trabajo'], dummy_na=False, drop_first=True)
 
-def dataset_split(df):
+def dataset_split(df, test_size = 0.30):
     # se separa el dataset en entrenamiento y holdout usando la biblioteca model_selection de sklearn
     X_train, X_holdout, y_train, y_holdout =  train_test_split(
-        df.drop('tiene_alto_valor_adquisitivo', axis= 'columns'), df.tiene_alto_valor_adquisitivo, test_size = 0.30, random_state = 0, stratify = df.tiene_alto_valor_adquisitivo
+        df.drop('tiene_alto_valor_adquisitivo', axis= 'columns'), 
+        df.tiene_alto_valor_adquisitivo, test_size = test_size, 
+        random_state = 0, 
+        stratify = df.tiene_alto_valor_adquisitivo
     )
     X_train.reset_index(drop = True, inplace= True)
     X_holdout.reset_index(drop = True, inplace= True)
@@ -75,7 +80,7 @@ def ordinal_encode(df):
 
 
 #Seleccionar los features más importantes para el predictor
-def embedded(X, y, clf, min_importance=0.05):
+def embedded(X, y, clf = DecisionTreeClassifier(random_state=117), min_importance=0.05):
     X_embedded = X
     feature_importance = 0
     while(feature_importance < min_importance):
