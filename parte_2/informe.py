@@ -20,7 +20,7 @@ def plt_distribucion_de_clases(y):
     plt.show()
     
 def plot_roc(modelo, X, y):
-    fpr, tpr, thresholds = roc_curve(y, modelo.predict_proba(X)[:,1]) # aca le paso las probabilidades en vez de y_pred, es lo mas recomendado
+    fpr, tpr, thresholds = roc_curve(y, modelo.predict_proba(X)[:,1])
     
     roc_auc = auc(fpr, tpr)
 
@@ -51,3 +51,11 @@ def imprimir_informe(modelo, X_holdout, y_holdout):
 
     print('Métricas:')
     print(classification_report(y_holdout, y_pred))
+    
+    
+def imprimir_metricas(rscv, X, y, nombre):
+    print(f"Resultados {nombre}")
+    print(f"    Mejores hiperparámetros: {rscv.best_params_}")
+    print(f"    Métrica AUC ROC: {rscv.best_score_:.2f}")
+    print("    Otras metricas:")
+    print(classification_report(y, rscv.best_estimator_.predict(X)))
