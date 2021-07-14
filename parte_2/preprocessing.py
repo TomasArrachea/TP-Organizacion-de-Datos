@@ -5,9 +5,6 @@ from sklearn.tree import DecisionTreeClassifier
 
 ## Funciones utilizadas para el preprocesamiento de cada modelo
 
-
-
-#Convertir las variables categóricas en numéricas
 def dummy_variables(df):
     columnas = [
         'estado_marital',
@@ -22,13 +19,11 @@ def dummy_variables(df):
     return df_dummy
 
 def remove_irrelevant_features(df):
-    # se quitan features no utiles (segun análisis exploratorio tp1)
     df.drop('educacion_alcanzada', axis='columns', inplace = True)
     df.drop('barrio', axis='columns', inplace = True)
     return df
     
 def missings_treatment(df):
-    # tratamiento de missings (visto en tp1)
     df['categoria_de_trabajo'] = df['categoria_de_trabajo'].replace(np.nan, 'sin_informar')
     df['trabajo'] = df['trabajo'].replace(np.nan, 'sin_informar')
     df.loc[df['categoria_de_trabajo'] == 'sin_trabajo', ['trabajo']] = 'sin_trabajo'
@@ -37,13 +32,12 @@ def missings_treatment(df):
 def one_hot_encodding(df):
     return pd.get_dummies(df, columns=['categoria_de_trabajo', 'estado_marital', 'genero', 'religion', 'rol_familiar_registrado', 'trabajo'], dummy_na=False, drop_first=True)
 
-def dataset_split(df, test_size = 0.30):
-    # se separa el dataset en entrenamiento y holdout usando la biblioteca model_selection de sklearn
+def dataset_split(X , y, test_size = 0.30):
     X_train, X_holdout, y_train, y_holdout =  train_test_split(
-        df.drop('tiene_alto_valor_adquisitivo', axis= 'columns'), 
-        df.tiene_alto_valor_adquisitivo, test_size = test_size, 
+        X, 
+        y, test_size = test_size, 
         random_state = 0, 
-        stratify = df.tiene_alto_valor_adquisitivo
+        stratify = y
     )
     X_train.reset_index(drop = True, inplace= True)
     X_holdout.reset_index(drop = True, inplace= True)
@@ -51,7 +45,7 @@ def dataset_split(df, test_size = 0.30):
     y_holdout.reset_index(drop = True, inplace= True)
     return X_train, X_holdout, y_train, y_holdout
 
-#Convertir las variables ordinales en numéricas
+
 from sklearn.preprocessing import OrdinalEncoder
 def ordinal_encode(df):
     categorias = [
@@ -79,7 +73,6 @@ def ordinal_encode(df):
     return df_encoded
 
 
-#Seleccionar los features más importantes para el predictor
 def embedded(X, y, clf = DecisionTreeClassifier(random_state=117), min_importance=0.05):
     X_embedded = X
     feature_importance = 0
@@ -90,3 +83,11 @@ def embedded(X, y, clf = DecisionTreeClassifier(random_state=117), min_importanc
         feature = X.columns[min_feature]
         X_embedded.drop(feature, axis=1, inplace=True)
     return X_embedded
+
+
+def escalar(X_train, X_test):
+    from sklearn.preprocessing import StandardScaler  
+    StandardScaler().fit(X_train)  
+    X_train = scaler.transform(X_train)  
+    X_test = scaler.transform(X_test)  
+    return X_train, X_test
