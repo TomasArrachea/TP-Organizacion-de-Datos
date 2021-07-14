@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import Normalizer, OrdinalEncoder, StandardScaler  
 
 ## Funciones utilizadas para el preprocesamiento de cada modelo
 
@@ -21,7 +23,7 @@ def dummy_variables(df):
 def remove_irrelevant_features(df):
     df.drop('educacion_alcanzada', axis='columns', inplace = True)
     df.drop('barrio', axis='columns', inplace = True)
-    return df
+    return df    
     
 def missings_treatment(df):
     df['categoria_de_trabajo'] = df['categoria_de_trabajo'].replace(np.nan, 'sin_informar')
@@ -45,8 +47,6 @@ def dataset_split(X , y, test_size = 0.30):
     y_holdout.reset_index(drop = True, inplace= True)
     return X_train, X_holdout, y_train, y_holdout
 
-
-from sklearn.preprocessing import OrdinalEncoder
 def ordinal_encode(df):
     categorias = [
      'preescolar',
@@ -72,7 +72,6 @@ def ordinal_encode(df):
     df_encoded = df_encoded.drop('educacion_alcanzada', axis=1)
     return df_encoded
 
-
 def embedded(X, y, clf = DecisionTreeClassifier(random_state=117), min_importance=0.05):
     X_embedded = X
     feature_importance = 0
@@ -84,10 +83,20 @@ def embedded(X, y, clf = DecisionTreeClassifier(random_state=117), min_importanc
         X_embedded.drop(feature, axis=1, inplace=True)
     return X_embedded
 
-
 def escalar(X_train, X_test):
-    from sklearn.preprocessing import StandardScaler  
-    StandardScaler().fit(X_train)  
+    scaler = StandardScaler()
+    scaler.fit(X_train)  
     X_train = scaler.transform(X_train)  
     X_test = scaler.transform(X_test)  
-    return X_train, X_test
+    return X_train, X_test, scaler
+
+def normalizar(df):
+    normalizer = Normalizer()
+    df = normalizer.transform(df)
+    return df
+
+def pca(df, n_components=0.90):
+    pca = PCA(n_components=n_components)
+    pca.fit(df)
+    df = pca.transform(df)
+    return df
