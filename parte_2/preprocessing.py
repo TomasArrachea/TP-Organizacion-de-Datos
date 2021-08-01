@@ -83,16 +83,34 @@ def embedded(X, y, clf = DecisionTreeClassifier(random_state=117), min_importanc
         X_embedded.drop(feature, axis=1, inplace=True)
     return X_embedded
 
-def escalar(X_train, X_test):
-    scaler = StandardScaler()
-    scaler.fit(X_train)  
-    X_train = scaler.transform(X_train)  
-    X_test = scaler.transform(X_test)  
-    return X_train, X_test, scaler
+numerical_features = ['anios_estudiados', 'edad', 'ganancia_perdida_declarada_bolsa_argentina', 'horas_trabajo_registradas']
+
+def escalar(df, scaler = None):
+    df_features_numericos = df[numerical_features]
+    
+    if (scaler == None):
+        scaler = StandardScaler()
+        scaler.fit(df_features_numericos)
+    df_features_numericos = scaler.transform(df_features_numericos)
+    
+    df.drop(numerical_features, axis= 'columns', inplace = True)
+    
+    df_features_numericos = pd.DataFrame(df_features_numericos, columns = numerical_features)
+    print(df_features_numericos)
+    
+    df = df.join(df_features_numericos)
+
+    
+    return df, scaler
 
 def normalizar(df):
     normalizer = Normalizer()
-    df = normalizer.transform(df)
+    df_features_numericos = df[numerical_features]
+    df.drop(numerical_features, axis= 'columns', inplace = True)
+    
+    df_features_numericos = normalizer.transform(df_features_numericos.transpose()).transpose()
+    
+    df = df.join(df_features_numericos)
     return df
 
 def pca(df, n_components=0.90):
