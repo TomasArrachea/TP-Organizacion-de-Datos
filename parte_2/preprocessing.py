@@ -87,30 +87,19 @@ numerical_features = ['anios_estudiados', 'edad', 'ganancia_perdida_declarada_bo
 
 def escalar(df, scaler = None):
     df_features_numericos = df[numerical_features]
-    
+
     if (scaler == None):
         scaler = StandardScaler()
         scaler.fit(df_features_numericos)
-    df_features_numericos = scaler.transform(df_features_numericos)
     
-    df.drop(numerical_features, axis= 'columns', inplace = True)
-    
-    df_features_numericos = pd.DataFrame(df_features_numericos, columns = numerical_features)
-    print(df_features_numericos)
-    
-    df = df.join(df_features_numericos)
-
-    
+    features_escalados = pd.DataFrame(scaler.transform(df_features_numericos), columns = numerical_features, index=df.index)
+    df = df.drop(numerical_features, axis= 'columns').join(features_escalados)    
     return df, scaler
 
 def normalizar(df):
-    normalizer = Normalizer()
-    df_features_numericos = df[numerical_features]
-    df.drop(numerical_features, axis= 'columns', inplace = True)
-    
-    df_features_numericos = normalizer.transform(df_features_numericos.transpose()).transpose()
-    
-    df = df.join(df_features_numericos)
+    features_normalizados = Normalizer().transform(df[numerical_features].T).T
+    features_normalizados = pd.DataFrame(features_normalizados, columns = numerical_features, index=df.index)
+    df = df.drop(numerical_features, axis= 'columns').join(features_normalizados)
     return df
 
 def pca(df, n_components=0.90):
