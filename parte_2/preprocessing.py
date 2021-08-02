@@ -104,8 +104,9 @@ def normalizar(df, normalizer = None):
     df = df.drop(numerical_features, axis= 'columns').join(features_normalizados)
     return df, normalizer
 
-def pca(df, n_components=0.90):
-    pca = PCA(n_components=n_components)
-    pca.fit(df)
+def pca(df, n_components=0.90, pca = None):
+    if (pca == None):
+        pca = PCA(n_components=n_components)
+        pca.fit(df)
     df = pca.transform(df)
-    return df
+    return df, pca
