@@ -96,11 +96,13 @@ def escalar(df, scaler = None):
     df = df.drop(numerical_features, axis= 'columns').join(features_escalados)    
     return df, scaler
 
-def normalizar(df):
-    features_normalizados = Normalizer().transform(df[numerical_features].T).T
+def normalizar(df, normalizer = None):
+    if (normalizer == None):
+        normalizer = Normalizer().fit(df[numerical_features].T)
+    features_normalizados = normalizer.transform(df[numerical_features].T).T
     features_normalizados = pd.DataFrame(features_normalizados, columns = numerical_features, index=df.index)
     df = df.drop(numerical_features, axis= 'columns').join(features_normalizados)
-    return df
+    return df, normalizer
 
 def pca(df, n_components=0.90):
     pca = PCA(n_components=n_components)
