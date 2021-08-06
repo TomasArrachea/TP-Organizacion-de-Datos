@@ -7,19 +7,6 @@ from sklearn.preprocessing import Normalizer, OrdinalEncoder, StandardScaler
 
 ## Funciones utilizadas para el preprocesamiento de cada modelo
 
-def dummy_variables(df):
-    columnas = [
-        'estado_marital',
-        'genero',
-        'religion',
-        'barrio',
-        'categoria_de_trabajo',
-        'rol_familiar_registrado',
-        'trabajo'
-    ]
-    df_dummy = pd.get_dummies(df, columns=columnas, dummy_na=False, drop_first=True)
-    return df_dummy
-
 def remove_irrelevant_features(df):
     df.drop('educacion_alcanzada', axis='columns', inplace = True)
     df.drop('barrio', axis='columns', inplace = True)
@@ -31,7 +18,7 @@ def missings_treatment(df):
     df.loc[df['categoria_de_trabajo'] == 'sin_trabajo', ['trabajo']] = 'sin_trabajo'
     return df
 
-def one_hot_encodding(df):
+def one_hot_encoding(df):
     return pd.get_dummies(df, columns=['categoria_de_trabajo', 'estado_marital', 'genero', 'religion', 'rol_familiar_registrado', 'trabajo'], dummy_na=False, drop_first=True)
 
 def dataset_split(X , y, test_size = 0.30):
